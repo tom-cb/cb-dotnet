@@ -16,7 +16,7 @@ using Couchbase.Configuration.Client;
 internal class Program
 {
     
-    static int DOC_COUNT = 10000;
+    static int DOC_COUNT = 1000;
     static bool OUTPUT_READS = false;
 
     private static void Main(string[] args)
@@ -30,7 +30,7 @@ internal class Program
         {
             var watch = Stopwatch.StartNew();
 
-            //createDocs(bucket);
+            createDocs(bucket);
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
