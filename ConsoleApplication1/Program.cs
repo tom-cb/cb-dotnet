@@ -15,8 +15,7 @@ using Couchbase.Configuration.Client;
 
 internal class Program
 {
-    
-    static int DOC_COUNT = 1000;
+    static int DOC_COUNT = 10000;
     static bool OUTPUT_READS = false;
 
     private static void Main(string[] args)
@@ -30,30 +29,32 @@ internal class Program
         {
             var watch = Stopwatch.StartNew();
 
+            //Create an initial set of documents for us to work with
             createDocs(bucket);
 
             watch.Stop();
             var elapsedMs = watch.ElapsedMilliseconds;
 
-            Console.WriteLine("time: " + elapsedMs + "ms");
+            Console.WriteLine("Create time: " + elapsedMs + "ms");
 
-
+            //A List of keys for us to work with
             List<String> keys = new List<string>();
             for (int i = 0; i <= DOC_COUNT; i++)
             {
                 keys.Add(i.ToString());
             }
 
+            //Get the documents using the built in method
             getBulkDocs(bucket, keys);
-
-            getBulkDocsAsync(bucket, keys);
+            //Get the documents using the new async Tasks
+            getBulkDocsUsingAsync(bucket, keys);
 
             Console.Read();
 
         }
     }
 
-    private async static void getBulkDocsAsync(Couchbase.Core.IBucket bucket, List<string> keys)
+    private async static void getBulkDocsUsingAsync(Couchbase.Core.IBucket bucket, List<string> keys)
     {
         var watch = Stopwatch.StartNew();
 
@@ -68,16 +69,15 @@ internal class Program
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
 
-        Console.WriteLine("Async Read time: " + elapsedMs + "ms");
+        Console.WriteLine("Bulk Read time using Async: " + elapsedMs + "ms");
 
-        foreach (var res in results)
+        if (OUTPUT_READS)
         {
-            //Console.WriteLine(res.Status + " " + res.Content);
+            foreach (var res in results)
+            {
+                Console.WriteLine(res.Status + " " + res.Content);
+            }
         }
-
-
-        //Console.WriteLine("has value: \n" + result.Value);
-
     }
 
     private static void getBulkDocs(Couchbase.Core.IBucket bucket, List<string> keys)
@@ -93,7 +93,7 @@ internal class Program
         watch.Stop();
         var elapsedMs = watch.ElapsedMilliseconds;
 
-        Console.WriteLine("Read time: " + elapsedMs + "ms");
+        Console.WriteLine("Bulk Read time: " + elapsedMs + "ms");
 
         if (OUTPUT_READS)
         {
